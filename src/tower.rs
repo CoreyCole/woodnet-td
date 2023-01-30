@@ -10,7 +10,7 @@ pub struct Tower {
     pub range: f32,
 }
 
-#[derive(Inspectable, Component, Clone, Copy, Debug)]
+#[derive(Component, Clone, Copy, Debug)]
 pub enum TowerType {
     Tomato,
     Potato,
@@ -32,7 +32,7 @@ pub struct TowerPlugin;
 impl Plugin for TowerPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Tower>()
-            .register_inspectable::<TowerType>()
+            // .register_inspectable::<TowerType>()
             .register_type::<TowerButtonState>()
             .add_system_set(
                 SystemSet::on_update(GameState::Gameplay)

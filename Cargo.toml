@@ -1,5 +1,5 @@
 [package]
-name = "bevy-tower-defense"
+name = "woodnet-td"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,7 +10,7 @@ opt-level = 1
 opt-level = 3
 
 [dependencies]
-bevy = {version = "0.9", features = ["dynamic", "wav"] }
-bevy-inspector-egui = "0.14.0"
-bevy_mod_picking = "0.10"
+bevy = {version = "0.9.1", features = ["dynamic", "wav"] }
+bevy-inspector-egui = "0.17.0"
+bevy_mod_picking = "0.11"
 

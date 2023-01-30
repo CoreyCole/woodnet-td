@@ -1,5 +1,5 @@
 use bevy::{pbr::NotShadowCaster, prelude::*, utils::FloatOrd};
-use bevy_inspector_egui::{Inspectable, RegisterInspectable, WorldInspectorPlugin};
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_mod_picking::*;
 
 pub const HEIGHT: f32 = 720.0;
@@ -43,14 +43,14 @@ fn main() {
             window: WindowDescriptor {
                 width: WIDTH,
                 height: HEIGHT,
-                title: "Bevy Tower Defense".to_string(),
+                title: "Woodnet TD".to_string(),
                 resizable: false,
                 ..default()
             },
             ..default()
         }))
         // Inspector Setup
-        .add_plugin(WorldInspectorPlugin::new())
+        .add_plugin(WorldInspectorPlugin)
         // Mod Picking
         .add_plugins(DefaultPickingPlugins)
         // Our State
