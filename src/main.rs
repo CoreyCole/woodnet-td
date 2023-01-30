@@ -6,11 +6,14 @@ use clap::Parser;
 pub const HEIGHT: f32 = 720.0;
 pub const WIDTH: f32 = 1280.0;
 
-#[derive(Parser, Debug)]
-struct Args {
+#[derive(Parser, Resource, Debug)]
+pub struct Args {
     /// dev mode
     #[arg(short = 'd', long = "dev", value_parser)]
     dev: bool,
+    // number of targets
+    #[arg(short = 't', long = "targets", default_value = "25")]
+    targets: usize,
 }
 
 #[derive(Resource)]
@@ -64,6 +67,7 @@ fn main() {
         .add_plugins(DefaultPickingPlugins)
         // Our state
         .add_state(if args.dev { GameState::Gameplay } else { GameState::MainMenu})
+        .insert_resource(args)
         // Our Systems
         .add_plugin(TowerPlugin)
         .add_plugin(TargetPlugin)
@@ -143,6 +147,7 @@ fn spawn_basic_scene(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     game_assets: Res<GameAssets>,
+    args: Res<Args>,
 ) {
     commands
         .spawn(PbrBundle {
@@ -184,7 +189,7 @@ fn spawn_basic_scene(
         }
     }
 
-    for i in 1..25 {
+    for i in 1..=args.targets {
         commands
             .spawn(SceneBundle {
                 scene: game_assets.target_scene.clone(),
