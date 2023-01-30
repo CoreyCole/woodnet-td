@@ -1,9 +1,17 @@
 use bevy::{pbr::NotShadowCaster, prelude::*, utils::FloatOrd};
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_mod_picking::*;
+use clap::Parser;
 
 pub const HEIGHT: f32 = 720.0;
 pub const WIDTH: f32 = 1280.0;
+
+#[derive(Parser, Debug)]
+struct Args {
+    /// dev mode
+    #[arg(short = 'd', long = "dev", value_parser)]
+    dev: bool,
+}
 
 #[derive(Resource)]
 pub struct GameAssets {
@@ -36,6 +44,7 @@ pub enum GameState {
 }
 
 fn main() {
+    let args = Args::parse();
     App::new()
         // Window Setup
         .insert_resource(ClearColor(Color::rgb(0.3, 0.3, 0.3)))
@@ -53,8 +62,8 @@ fn main() {
         .add_plugin(WorldInspectorPlugin)
         // Mod Picking
         .add_plugins(DefaultPickingPlugins)
-        // Our State
-        .add_state(GameState::MainMenu)
+        // Our state
+        .add_state(if args.dev { GameState::Gameplay } else { GameState::MainMenu})
         // Our Systems
         .add_plugin(TowerPlugin)
         .add_plugin(TargetPlugin)
@@ -82,6 +91,15 @@ fn asset_loading(mut commands: Commands, assets: Res<AssetServer>) {
     });
 }
 
+fn spawn_camera(mut commands: Commands) {
+    commands
+        .spawn(Camera3dBundle {
+            transform: Transform::from_xyz(-10., 10., 10.).looking_at(Vec3::ZERO, Vec3::Y),
+            ..default()
+        })
+        .insert(PickingCameraBundle::default());
+}
+
 fn camera_controls(
     keyboard: Res<Input<KeyCode>>,
     mut camera_query: Query<&mut Transform, With<Camera3d>>,
@@ -97,7 +115,7 @@ fn camera_controls(
     left.y = 0.0;
     left = left.normalize();
 
-    let speed = 3.0;
+    let speed = 10.0;
     let rotate_speed = 0.3;
 
     if keyboard.pressed(KeyCode::W) {
@@ -119,16 +137,6 @@ fn camera_controls(
         camera.rotate_axis(Vec3::Y, -rotate_speed * time.delta_seconds())
     }
 }
-
-/* Selection testing system
-fn what_is_selected(selection: Query<(&Name, &Selection)>) {
-    for (name, selection) in &selection {
-        if selection.selected() {
-            info!("{}", name);
-        }
-    }
-}
-*/
 
 fn spawn_basic_scene(
     mut commands: Commands,
@@ -202,13 +210,4 @@ fn spawn_basic_scene(
             ..default()
         })
         .insert(Name::new("Light"));
-}
-
-fn spawn_camera(mut commands: Commands) {
-    commands
-        .spawn(Camera3dBundle {
-            transform: Transform::from_xyz(-2.0, 2.5, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
-            ..default()
-        })
-        .insert(PickingCameraBundle::default());
 }
